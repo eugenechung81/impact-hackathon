@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Deep Algo DFG Viewer</title>
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
+
+    <script src="jscripts/codecaseutils/sync.js"></script>
+    <script src="jscripts/codecaseutils/filesystem.js"></script>
+    <script src="jscripts/codecaseutils/codecaseunderscore.js"></script>
+    <script src="jquery-1.11.2.min.js"></script>
+    <script src="jquery-ui.min.js"></script>
+    <script src="go.js"></script>
+    <script src="helpers.js"></script>
+    <script src="dataflow_commons.js"></script>
+    <script src="dataflow_layout.js"></script>
+    <script src="dataflow_links.js"></script>
+    <script src="dataflow_diagram.js"></script>
+    <script src="dataflow_toolbar.js"></script>
+    <script src="dataflow_selector.js"></script>
+    <script src="dataflow_client.js"></script>
+    <link rel="stylesheet" type="text/css" href="diagram.css" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="jquery-ui.min.css" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="jquery-ui.structure.min.css" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="jquery-ui.theme.min.css" media="screen"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+    <style>
+        .toolbar {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 200px;
+            margin-left: -100px;
+            text-align: center;
+            z-index: 99;
+        }
+
+        .toolbar-button {
+            background: white;
+            width: 26px;
+            height: 26px;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .toolbar-button-disabled {
+            opacity: 0.1;
+            cursor: default;
+        }
+    </style>
+</head>
+<body class="deepalgo">
+
+<div>
+    <div class="col-sm-2">
+        Test
+    </div>
+    <div class="col-sm-8">
+        <div id="menu">
+            <div id="buttons">
+                <div id="selector"></div>
+            </div>
+        </div>
+        <div id="diagram-container">
+            <div class="toolbar">
+                <img class="toolbar-button" id="btn-hide-links" src="images/Hide.png"/>
+            </div>
+            <div id="globalDiagram" class="height50"></div>
+            <div id="root"></div>
+            <div><!-- HTML generated using hilite.me -->
+                <div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+                    <table>
+                        <tr>
+                            <td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13</pre>
+                            </td>
+                            <td><pre style="margin: 0; line-height: 125%"><span
+                                    style="color: #333399; font-weight: bold">int</span> <span
+                                    style="color: #0066BB; font-weight: bold">main</span>(<span
+                                    style="color: #333399; font-weight: bold">int</span> argc, <span
+                                    style="color: #333399; font-weight: bold">char</span> <span
+                                    style="color: #333333">*</span>argv[])
+{
+  <span style="color: #333399; font-weight: bold">int</span> var<span style="color: #333333">=</span><span
+                                        style="color: #0000DD; font-weight: bold">3</span>;
+  <span style="color: #333399; font-weight: bold">int</span> more <span style="color: #333333">=</span> var <span
+                                        style="color: #333333">+</span> <span
+                                        style="color: #0000DD; font-weight: bold">1</span>;
+  <span style="color: #008800; font-weight: bold">if</span>(argc <span style="color: #333333">==</span> <span
+                                        style="color: #0000DD; font-weight: bold">0</span>){
+    var <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">2</span>;
+  }
+  <span style="color: #008800; font-weight: bold">else</span>{
+    var <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">4</span>;
+  }
+  printf(more);
+  <span style="color: #008800; font-weight: bold">return</span> var;
+}
+</pre>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var client = new DataflowClient();
+    var diagram = new DataflowDiagram(client);
+    var selector = new DataflowSelector('selector');
+    selector.onGraphSelected(function (graphId) {
+        diagram.displayDiagram(graphId);
+    });
+    var toolbar = new DataflowToolbar(diagram);
+    WebFont.load({
+        google: {
+            families: ['Open Sans:400,600'],
+        },
+        active: diagram.redraw.bind(diagram),
+        inactive: diagram.redraw.bind(diagram),
+    });
+</script>
+</body>
+</html>
