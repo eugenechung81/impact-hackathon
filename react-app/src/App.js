@@ -43,6 +43,10 @@ class App extends Component {
   render() {
     return (
       <div>
+        <button
+        onClick={()=>{
+          window.diagram.displayDiagram("poker_10609");
+        }}>Test</button>
 Test      </div>
     );
   }

@@ -124,6 +124,7 @@
     var diagram = new DataflowDiagram(client);
     var selector = new DataflowSelector('selector');
     selector.onGraphSelected(function (graphId) {
+        console.log(graphId);
         diagram.displayDiagram(graphId);
     });
     var toolbar = new DataflowToolbar(diagram);
