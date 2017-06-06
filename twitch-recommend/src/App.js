@@ -86,7 +86,7 @@ class App extends Component {
       }
     });
     instance.post('/accounts/hackathon07/profiles/hackathon07/recos', {
-      "size": 15
+      "size": 8
     }).then((res) => {
 
       // filter recommendations on watched
@@ -200,7 +200,7 @@ class App extends Component {
       <div className="App">
         <div className="App-header">
           {/*<img src={logo} className="App-logo" alt="logo"/>*/}
-          <h2>Twitch Channel Recommender</h2>
+          <h2>Twic - Twitch Channel Recommender</h2>
           <div>
             <div className="heading-powered-by">Powered by:</div>
             <img src={cognikLogo} style={{ height: "30px"}} alt="logo"/>
@@ -301,15 +301,6 @@ class App extends Component {
               });
 
             }}>Skip
-            </button>
-            <button className="button" onClick={()=> {
-              let new_channel_id = "wardiii";
-              this.setState({
-                id: new_channel_id
-              });
-              this.updateCurrentGamer(new_channel_id);
-              this.reloadVideoPlayer(new_channel_id);
-            }}>Test
             </button>
           </div>
 
