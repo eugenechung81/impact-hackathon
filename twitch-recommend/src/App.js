@@ -5,6 +5,7 @@ import "twitch-embed";
 import axios from "axios";
 import numeral from "numeral";
 import _ from "underscore";
+import cognikLogo from './cognik-logo.png';
 // import "./divPlayer";
 
 class App extends Component {
@@ -106,13 +107,8 @@ class App extends Component {
         console.log(watchedChannels)
       }
 
-
-      // recommendedChannels.removeAll(this.state.watchedChannels);
-
-      // console.log(res);
-      let channelId = res.data.contents[0]['name'];
-      //this.updateCurrentGamer(channelId);
-      // this.reloadVideoPlayer(channelId);
+      let channelId = recommendedChannels[0]['name'];
+      this.reloadVideoPlayer(channelId);
       this.setState({
         channelId: channelId,
         recoId: res.data.reco_id,
@@ -205,6 +201,10 @@ class App extends Component {
         <div className="App-header">
           {/*<img src={logo} className="App-logo" alt="logo"/>*/}
           <h2>Twitch Channel Recommender</h2>
+          <div>
+            <div className="heading-powered-by">Powered by:</div>
+            <img src={cognikLogo} style={{ height: "30px"}} alt="logo"/>
+          </div>
         </div>
         <p className="App-intro">
           <div id="container">
@@ -216,6 +216,7 @@ class App extends Component {
 
           <div className="button-row">
             <button className="button" onClick={() => {
+              let durationViewed = this.refs.timer.getTime();
               var instance = axios.create({
                 baseURL: 'http://raas-se-prod.cognik.us/v1/',
                 timeout: 1000,
@@ -231,11 +232,12 @@ class App extends Component {
                 "reco_id": this.state.recoId,
                 "type": "like",
                 "percentage_viewed": 100,
-                "duration_viewed": this.refs.timer.getTime()
+                "duration_viewed": durationViewed
               }).then((res) => {
                 this.setState({
                   currentGamerInfo: Object.assign(this.state.currentGamerInfo,
-                    {"action": "like"})
+                    {"action": "like",
+                    "watched_seconds": durationViewed })
                 });
                 this.getRecommendations();
               });
@@ -243,6 +245,7 @@ class App extends Component {
             }}>Like
             </button>
             <button className="button" onClick={() => {
+              let durationViewed = this.refs.timer.getTime();
               var instance = axios.create({
                 baseURL: 'http://raas-se-prod.cognik.us/v1/',
                 timeout: 1000,
@@ -262,7 +265,8 @@ class App extends Component {
               }).then((res) => {
                 this.setState({
                   currentGamerInfo: Object.assign(this.state.currentGamerInfo,
-                    {"action": "dislike"})
+                    {"action": "dislike",
+                    "watched_seconds": durationViewed})
                 });
                 this.getRecommendations();
               });
@@ -270,6 +274,7 @@ class App extends Component {
             }}>Dislike
             </button>
             <button className="button" onClick={() => {
+              let durationViewed = this.refs.timer.getTime();
               var instance = axios.create({
                 baseURL: 'http://raas-se-prod.cognik.us/v1/',
                 timeout: 1000,
@@ -289,7 +294,8 @@ class App extends Component {
               }).then((res) => {
                 this.setState({
                   currentGamerInfo: Object.assign(this.state.currentGamerInfo,
-                    {"action": "skip"})
+                    {"action": "skip",
+                    "watched_seconds": durationViewed})
                 });
                 this.getRecommendations();
               });
@@ -373,8 +379,10 @@ class WatchedChannels extends React.Component {
           return (
             <div key={g.name} className="recommend-row">
               <div className="recommend-item"><img className="recommend-img" src={g.logo}/></div>
-              <div className="recommend-gamer-details recommend-item">{g.name} - {g.game} {mature}
-                <div className={actionClass}>{g.action}</div>
+              <div className="recommend-gamer-details recommend-item">
+                <div style={{display: "inline-block", width: "200px"}}>{g.name} - {g.game} {mature}</div>
+                <div style={{display: "inline-block"}}>Watched: {g.watched_seconds}s</div>
+                <div className={actionClass} >{g.action}</div>
               </div>
             </div>
           )

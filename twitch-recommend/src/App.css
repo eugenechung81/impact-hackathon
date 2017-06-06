@@ -9,9 +9,14 @@
 
 .App-header {
     background-color: #222;
-    height: 80px;
+    height: 130px;
     padding: 20px;
     color: white;
+}
+
+.heading-powered-by {
+    font-size: smaller;
+    margin-bottom: 10px;
 }
 
 .App-intro {
