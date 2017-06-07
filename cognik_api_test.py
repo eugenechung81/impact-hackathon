@@ -100,7 +100,7 @@ pprint(res.json())
 
 # craete profile
 res = requests.post(
-    'http://raas-se-prod.cognik.us/v1/accounts/hackathon02/profiles/user1',
+    'http://raas-se-prod.cognik.us/v1/accounts/hackathon07/profiles/user1',
     headers={
         "Content-Type": "application/json",
         "Accept": "application/json",
@@ -113,7 +113,8 @@ pprint(res.json())
 # get recommendations
 
 account_id = "hackathon07"
-profile_id = "hackathon07"
+# profile_id = "hackathon07"
+profile_id = "user1"
 
 res = requests.post(
     'http://raas-se-prod.cognik.us/v1/accounts/%s/profiles/%s/recos' % (account_id, profile_id),

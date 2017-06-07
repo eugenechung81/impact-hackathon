@@ -5,7 +5,7 @@ import "twitch-embed";
 import axios from "axios";
 import numeral from "numeral";
 import _ from "underscore";
-import cognikLogo from './cognik-logo.png';
+import cognikLogo from "./cognik-logo.png";
 // import "./divPlayer";
 
 class App extends Component {
@@ -16,8 +16,8 @@ class App extends Component {
       id: "dallas",
       channelId: "",
 
-      accountId: "",
-      profileId: "",
+      accountId: "hackathon07",
+      profileId: "user1",
       recoId: "",
 
       currentGamerInfo: ({}),
@@ -85,7 +85,7 @@ class App extends Component {
         "x-app-token": this.token
       }
     });
-    instance.post('/accounts/hackathon07/profiles/hackathon07/recos', {
+    instance.post('/accounts/{0}/profiles/{1}/recos'.format(this.state.accountId, this.state.profileId), {
       "size": 8
     }).then((res) => {
 
@@ -142,6 +142,36 @@ class App extends Component {
       this.setState({
         currentGamerInfo: res.data
       })
+    });
+  }
+
+  updateAction(action) {
+    let durationViewed = this.refs.timer.getTime();
+    var instance = axios.create({
+      baseURL: 'http://raas-se-prod.cognik.us/v1/',
+      timeout: 1000,
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "x-platform-id": "desktop",
+        "x-app-token": this.token
+      }
+    });
+    instance.post('/accounts/{0}/profiles/{1}/actions'.format(this.state.accountId, this.state.profileId), {
+      "content_id": this.state.channelId,
+      "reco_id": this.state.recoId,
+      "type": action,
+      "percentage_viewed": 100,
+      "duration_viewed": durationViewed
+    }).then((res) => {
+      this.setState({
+        currentGamerInfo: Object.assign(this.state.currentGamerInfo,
+          {
+            "action": action,
+            "watched_seconds": durationViewed
+          })
+      });
+      this.getRecommendations();
     });
   }
 
@@ -203,7 +233,7 @@ class App extends Component {
           <h2>Twic - Twitch Channel Recommender</h2>
           <div>
             <div className="heading-powered-by">Powered by:</div>
-            <img src={cognikLogo} style={{ height: "30px"}} alt="logo"/>
+            <img src={cognikLogo} style={{height: "30px"}} alt="logo"/>
           </div>
         </div>
         <p className="App-intro">
@@ -216,90 +246,15 @@ class App extends Component {
 
           <div className="button-row">
             <button className="button" onClick={() => {
-              let durationViewed = this.refs.timer.getTime();
-              var instance = axios.create({
-                baseURL: 'http://raas-se-prod.cognik.us/v1/',
-                timeout: 1000,
-                headers: {
-                  "Content-Type": "application/json",
-                  "Accept": "application/json",
-                  "x-platform-id": "desktop",
-                  "x-app-token": this.token
-                }
-              });
-              instance.post('/accounts/hackathon07/profiles/hackathon07/actions', {
-                "content_id": this.state.channelId,
-                "reco_id": this.state.recoId,
-                "type": "like",
-                "percentage_viewed": 100,
-                "duration_viewed": durationViewed
-              }).then((res) => {
-                this.setState({
-                  currentGamerInfo: Object.assign(this.state.currentGamerInfo,
-                    {"action": "like",
-                    "watched_seconds": durationViewed })
-                });
-                this.getRecommendations();
-              });
-
+              this.updateAction("like")
             }}>Like
             </button>
             <button className="button" onClick={() => {
-              let durationViewed = this.refs.timer.getTime();
-              var instance = axios.create({
-                baseURL: 'http://raas-se-prod.cognik.us/v1/',
-                timeout: 1000,
-                headers: {
-                  "Content-Type": "application/json",
-                  "Accept": "application/json",
-                  "x-platform-id": "desktop",
-                  "x-app-token": this.token
-                }
-              });
-              instance.post('/accounts/hackathon07/profiles/hackathon07/actions', {
-                "content_id": this.state.channelId,
-                "reco_id": this.state.recoId,
-                "type": "dislike",
-                "percentage_viewed": 100,
-                "duration_viewed": this.refs.timer.getTime()
-              }).then((res) => {
-                this.setState({
-                  currentGamerInfo: Object.assign(this.state.currentGamerInfo,
-                    {"action": "dislike",
-                    "watched_seconds": durationViewed})
-                });
-                this.getRecommendations();
-              });
-
+              this.updateAction("dislike")
             }}>Dislike
             </button>
             <button className="button" onClick={() => {
-              let durationViewed = this.refs.timer.getTime();
-              var instance = axios.create({
-                baseURL: 'http://raas-se-prod.cognik.us/v1/',
-                timeout: 1000,
-                headers: {
-                  "Content-Type": "application/json",
-                  "Accept": "application/json",
-                  "x-platform-id": "desktop",
-                  "x-app-token": this.token
-                }
-              });
-              instance.post('/accounts/hackathon07/profiles/hackathon07/actions', {
-                "content_id": this.state.channelId,
-                "reco_id": this.state.recoId,
-                "type": "skip",
-                "percentage_viewed": 100,
-                "duration_viewed": this.refs.timer.getTime()
-              }).then((res) => {
-                this.setState({
-                  currentGamerInfo: Object.assign(this.state.currentGamerInfo,
-                    {"action": "skip",
-                    "watched_seconds": durationViewed})
-                });
-                this.getRecommendations();
-              });
-
+              this.updateAction("skip")
             }}>Skip
             </button>
           </div>
@@ -373,7 +328,7 @@ class WatchedChannels extends React.Component {
               <div className="recommend-gamer-details recommend-item">
                 <div style={{display: "inline-block", width: "200px"}}>{g.name} - {g.game} {mature}</div>
                 <div style={{display: "inline-block"}}>Watched: {g.watched_seconds}s</div>
-                <div className={actionClass} >{g.action}</div>
+                <div className={actionClass}>{g.action}</div>
               </div>
             </div>
           )
