@@ -23,3 +23,7 @@ rsync -av build/ root@67.207.85.22:/www/twitch-recommend/dist
 ## PROD
 
 http://67.207.85.22
+
+## Demo
+
+https://youtu.be/Nq0tm4ZxnU4
