@@ -1,0 +1,28 @@
+{
+  "name": "d3viewer",
+  "version": "0.0.1",
+  "description": "A sample Data Flow Graph viewer using D3.js",
+  "main": "index.js",
+  "scripts": {
+    "build:schema": "node_modules/.bin/json2ts -i ../jsonscheme/ioca_json_schema.json -o app/client/json-data.ts",
+    "build": "node_modules/.bin/webpack -p",
+    "dev": "node_modules/.bin/webpack -w"
+  },
+  "author": "Deep Algo",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/d3": "^4.9.0",
+    "@types/jquery": "^2.0.45",
+    "@types/jqueryui": "^1.11.32",
+    "@types/lodash": "^4.14.64",
+    "d3": "^4.9.1",
+    "immutable": "^3.8.1",
+    "jquery": "^3.2.1",
+    "jquery-ui": "^1.12.1",
+    "json-schema-to-typescript": "^4.3.3",
+    "lodash": "^4.17.4",
+    "ts-loader": "^2.1.0",
+    "typescript": "^2.3.3",
+    "webpack": "^2.6.0"
+  }
+}
