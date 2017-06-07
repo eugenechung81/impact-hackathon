@@ -6,7 +6,11 @@ import axios from "axios";
 import numeral from "numeral";
 import _ from "underscore";
 import cognikLogo from "./cognik-logo.png";
+//import Twitch from "twitch-sdk"; // not working need GUI
 // import "./divPlayer";
+
+const Twitch = window.Twitch;
+const $ = window.$;
 
 class App extends Component {
 
@@ -40,7 +44,11 @@ class App extends Component {
   }
 
 
+
   componentDidMount() {
+
+    $('.twitch-connect').show();
+    $('#logged-in-text').hide();
 
     // login and set token
     var instance = axios.create({
@@ -55,19 +63,113 @@ class App extends Component {
         "x-platform-id": "desktop",
       }
     });
-    //
-    //axios.post('http://raas-se-prod.cognik.us/v1/login/hackathon02',{
     instance.post('/login/hackathon07', {
       "app_id": "SE_H8jhtwd4du",
       "password": "nRK5vVMt6j"
     }).then((res)=> {
-      //console.log(res);
       this.token = res.data.token;
-      this.getRecommendations();
+
+      // twitch api
+      Twitch.init({clientId: 'lqq123lu6qqd4dix0gshi6ogiy9eb2'}, (error, status) => {
+        // the sdk is now loaded
+        // console.log(error);
+        // console.log(status);
+
+        // change profileId state from twitch login
+        if (status.authenticated) {
+          console.log('authenticated!');
+
+          Twitch.api({method: 'channel'}, (error, channel) => {
+            // console.log(channel);
+            this.setState({
+              profileId: channel.name
+            });
+            $('.twitch-connect').hide();
+            $('#logged-in-text').show();
+
+
+
+            // create profile id if not found
+            var instance = axios.create({
+              baseURL: 'http://raas-se-prod.cognik.us/v1/',
+              timeout: 1000,
+              headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "x-platform-id": "desktop",
+                "x-app-token": this.token
+              }
+            });
+
+            instance.get('/accounts/{0}/profiles'.format(this.state.accountId))
+              .then((res) => {
+                let profileExists = false;
+                _.forEach(res.data.profiles, function(p) {
+                  //console.log(p)
+                  if(p.profile_id === channel.name ) {
+                    profileExists = true;
+                  }
+                });
+                //console.log(profileExists);
+
+                // create profile
+                if (!profileExists) {
+                  console.log("creating new profile");
+                  instance.post('/accounts/{0}/profiles/{1}'.format(this.state.accountId, this.state.profileId))
+                    .then((res) => {
+                      // console.log(res);
+                      this.getRecommendations();
+                    });
+                } else {
+                  this.getRecommendations();
+                }
+
+              });
+
+
+          });
+
+        }
+        else {
+          this.getRecommendations();
+        }
+      });
+
+      // this.getRecommendations();
+      // console.log(window.location.hash);
+      // if(window.location.hash) {
+      //   const hashObjs = window.location.hash.substr(1)
+      //     .split("&")
+      //     .map(el => el.split("="))
+      //     .reduce((pre, cur) => {
+      //       pre[cur[0]] = cur[1];
+      //       return pre;
+      //     }, {});
+      //   console.log(window.location.hash);
+      //   console.log(hashObjs.access_token);
+      //   var instance = axios.create({
+      //     baseURL: 'https://api.twitch.tv/kraken/',
+      //     timeout: 1000,
+      //     headers: {
+      //       "Client-Id": 'lqq123lu6qqd4dix0gshi6ogiy9eb2',
+      //       'Authorization': 'OAuth ' + hashObjs.access_token
+      //     },
+      //   });
+      //   // instance.get('/channels/' + 'wardiii').then((res)=>{
+      //   instance.get('/user').then((res)=> {
+      //     console.log(res);
+      //     this.setState({
+      //       profileId: res.data.name
+      //     });
+      //   });
+      //
+      // }
+
 
     }).catch((err)=> {
       console.log(err);
     });
+
 
 
     // this.updateCurrentGamer("dallas");
@@ -237,6 +339,18 @@ class App extends Component {
           </div>
         </div>
         <p className="App-intro">
+          <img
+            src="http://ttv-api.s3.amazonaws.com/assets/connect_dark.png"
+            className="twitch-connect"
+            href="#"
+            onClick={()=> {
+              Twitch.login({
+                scope: ['user_read', 'channel_read']
+              });
+            }}
+          />
+          <div id="logged-in-text" style={{ paddingBottom: "10px"}}>Welcome back, {this.state.profileId}</div>
+
           <div id="container">
             <div id="video_view" className="twitch-video-embed"></div>
           </div>

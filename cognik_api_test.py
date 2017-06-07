@@ -152,3 +152,14 @@ pprint(res.json())
 
 
 
+
+
+# twitch test
+
+access_token = "g6owjggk49bz7ha6jwwniguxrp3av1"
+res = requests.get(
+    'https://api.twitch.tv/kraken/user',
+    headers= {
+        'Authorization': 'OAuth %s' % access_token
+    })
+pprint(res.json())
