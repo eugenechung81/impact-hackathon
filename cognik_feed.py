@@ -102,8 +102,12 @@ def load(total):
             })
         for s in res.json().get('streams'):
             c = s.get('channel')
-            update(c)
+            try:
+                update(c)
+            except:
+                print "Error: %s" % c.get('name')
 
     # pprint(res.json())
 
-load(300)
+# load(300)
+load(1000)
